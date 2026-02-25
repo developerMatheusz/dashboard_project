@@ -25,7 +25,9 @@ SECRET_KEY = 'django-insecure-l-$ie$+!d%y+74ww^w=13u(@l(z6r(0e(+yftg-$(=$fp3po7a
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'opportunya.flowfast.com.br'
+]
 
 
 # Application definition
