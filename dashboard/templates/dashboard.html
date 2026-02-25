@@ -142,7 +142,7 @@
     <script>
       async function carregarPedidos() {
         try {
-          const response = await fetch("/api/pedidos/");
+          const response = await fetch("/falcon/api/pedidos/");
           const dados = await response.json();
 
           const tabela = document.getElementById("pedidos-table");
