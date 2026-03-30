@@ -17,7 +17,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 
 RUN pip install --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt
+    && pip install --no-cache-dir -r requirements.txt \
+    && pip install --no-cache-dir gunicorn
 
 COPY . .
 
@@ -27,4 +28,4 @@ USER django
 
 EXPOSE 8000
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "config.wsgi:application"]
+CMD ["python", "-m", "gunicorn", "--bind", "0.0.0.0:8000", "config.wsgi:application"]
