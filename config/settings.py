@@ -26,7 +26,9 @@ SECRET_KEY = 'django-insecure-l-$ie$+!d%y+74ww^w=13u(@l(z6r(0e(+yftg-$(=$fp3po7a
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'opportunya.flowfast.com.br'
+    'opportunya.flowfast.com.br',
+    'localhost',
+    '191.101.235.98',
 ]
 
 

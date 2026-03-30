@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Editor de Proposta</title>
+
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+    <style>
+        body {
+            font-family: Arial;
+            margin: 40px;
+        }
+
+        #editor {
+            height: 300px;
+        }
+
+        .botoes {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<form style="display:none;">
+{% csrf_token %}
+</form>
+<h2>📝 Editor de Proposta</h2>
+
+<div id="editor"></div>
+
+<div class="botoes">
+    <button onclick="revisar()">✨ Revisar com IA</button>
+    <button onclick="baixar()">📥 Baixar Word</button>
+</div>
+
+<script>
+    var quill = new Quill('#editor', {
+        theme: 'snow'
+    });
+
+    function getHTML() {
+        return quill.root.innerHTML;
+    }
+
+    function revisar() {
+        fetch("/falcon/api/revisar/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-CSRFToken": getCSRF()
+            },
+            body: "html=" + encodeURIComponent(getHTML())
+        })
+        .then(res => res.json())
+        .then(data => {
+            quill.root.innerText = data.texto;
+        });
+    }
+
+    function baixar() {
+        fetch("/falcon/gerar-word/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-CSRFToken": getCSRF()
+            },
+            body: "html=" + encodeURIComponent(getHTML())
+        })
+        .then(res => res.blob())
+        .then(blob => {
+            let url = window.URL.createObjectURL(blob);
+            let a = document.createElement("a");
+            a.href = url;
+            a.download = "proposta.docx";
+            a.click();
+        });
+    }
+
+    function getCSRF() {
+        return document.cookie.split('; ')
+            .find(row => row.startsWith('csrftoken'))
+            ?.split('=')[1];
+    }
+</script>
+
+</body>
+</html>
