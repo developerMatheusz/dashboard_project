@@ -1,9 +1,13 @@
 FROM python:3.12-slim-bookworm
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    HOME=/home/django
 
 RUN addgroup --system django && adduser --system --ingroup django django
+
+RUN mkdir -p /home/django \
+    && chown -R django:django /home/django
 
 WORKDIR /app
 
@@ -28,4 +32,4 @@ USER django
 
 EXPOSE 8000
 
-CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3", "--timeout", "120"]
+CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3", "--timeout", "120", "--chdir", "/app"]
