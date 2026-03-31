@@ -39,6 +39,7 @@ def xcp_data(request):
     query = """
         SELECT * FROM xcp_execucao
         ORDER BY seq_execucao
+        LIMIT 10
     """
 
     cursor.execute(query)
