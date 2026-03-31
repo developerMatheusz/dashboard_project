@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Opportunya - IA</title>
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <style>
+        .container { max-width: 800px; margin: 30px auto; font-family: sans-serif; }
+        #editor { height: 300px; background: white; }
+        .box-revisao { background: #e9ecef; padding: 15px; margin: 20px 0; display: none; border-radius: 5px; }
+        button { padding: 10px; cursor: pointer; margin-right: 10px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>📝 Gerador de Propostas IA</h2>
+    <div id="editor"></div><br>
+
+    <button onclick="revisarComIA()" id="btn-revisar">✨ Revisar com IA</button>
+
+    <div id="box-revisao" class="box-revisao">
+        <strong>Texto Sugerido pela IA:</strong>
+        <p id="texto-sugerido"></p>
+    </div>
+
+    <form action="{% url 'gerar_word' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="html_original" id="html_input">
+        <input type="hidden" name="texto_revisado" id="revisado_input">
+        <button type="submit" onclick="prepararEnvio()">🚀 Baixar Proposta (Word)</button>
+    </form>
+</div>
+
+<script>
+    var quill = new Quill('#editor', { theme: 'snow' });
+
+    async function revisarComIA() {
+        const btn = document.getElementById('btn-revisar');
+        btn.innerText = "Processando...";
+        
+        const formData = new FormData();
+        formData.append('html', quill.root.innerHTML);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+        const response = await fetch("{% url 'revisar_ia' %}", { method: 'POST', body: formData });
+        const data = await response.json();
+
+        document.getElementById('box-revisao').style.display = 'block';
+        document.getElementById('texto-sugerido').innerText = data.revisado;
+        document.getElementById('revisado_input').value = data.revisado;
+        btn.innerText = "✨ Revisar com IA";
+    }
+
+    function prepararEnvio() {
+        document.getElementById('html_input').value = quill.root.innerHTML;
+    }
+</script>
+</body>
+</html>
